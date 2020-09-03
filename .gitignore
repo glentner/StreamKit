@@ -1,0 +1,20 @@
+# development
+.vscode/
+.idea/
+.ropeproject/
+
+# build files
+*.egg-info/
+build/
+dist/
+
+# cache
+__pycache__/
+
+# pipenv
+.env
+
+# testing
+.hypothesis/
+.pytest_cache/
+.coverage
