@@ -20,6 +20,7 @@ from streamkit.__meta__ import (__pkgname__,
                                 __authors__,
                                 __contact__,
                                 __license__,
+                                __website__,
                                 __description__)
 
 
@@ -29,7 +30,7 @@ with open('README.rst', mode='r') as readme:
 
 # core dependencies
 DEPENDENCIES = ['logalpha>=2.0.2', 'cmdkit>=1.5.4', 'toml>=0.10.1',
-                'sqlalchemy>=1.3.19', 'flask>=1.1.2', 'gunicorn>=20.0.4']
+                'sqlalchemy>=1.3.19', ]
 
 # add dependencies for readthedocs.io
 if os.environ.get('READTHEDOCS') == 'True':
@@ -44,7 +45,7 @@ setup(
     description      = __description__,
     license          = __license__,
     keywords         = 'pub-sub message broker',
-    url              = 'https://streamkit.readthedocs.io',
+    url              = __website__,
     packages         = find_packages(),
     long_description = long_description,
     long_description_content_type = 'text/x-rst',
@@ -53,7 +54,7 @@ setup(
                         'Programming Language :: Python :: 3.8',
                         'Programming Language :: Python :: 3.9',
                         'License :: OSI Approved :: Apache Software License', ],
-    entry_points     = {'console_scripts': []},
+    entry_points     = {'console_scripts': ['streamkit=streamkit.cli:main']},
     install_requires = DEPENDENCIES,
     extras_require  = {
         'postgres': ['psycopg2>=2.8.5', ],

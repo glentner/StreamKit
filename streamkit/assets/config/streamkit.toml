@@ -1,0 +1,7 @@
+[database]
+backend = "sqlite"
+database = ":memory:"  # FIXME: this must be changed!
+
+[logging]
+level = "warning"
+handler = "standard"
