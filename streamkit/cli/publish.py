@@ -30,7 +30,7 @@ from cmdkit.cli import Interface
 # program name is constructed from module file name
 PROGRAM = f'streamkit publish'
 USAGE = f"""\
-usage: {PROGRAM} [-h] NAME TOPIC LEVEL [FILE] [-b SIZE] [-t SEC]
+usage: {PROGRAM} [-h] TOPIC LEVEL [FILE] [-b SIZE] [-t SEC]
 {__doc__}\
 """
 
@@ -38,7 +38,6 @@ HELP = f"""\
 {USAGE}
 
 arguments:
-NAME                      Name of publisher.
 TOPIC                     Name of topic.
 LEVEL                     Name of level.
 FILE                      Path to file (default <stdin>).
