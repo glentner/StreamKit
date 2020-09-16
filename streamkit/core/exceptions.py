@@ -8,14 +8,13 @@
 # You should have received a copy of the Apache License along with this program.
 # If not, see <https://www.apache.org/licenses/LICENSE-2.0>.
 
-"""Metadata for StreamKit package."""
+"""Core exceptions and error handling within StreamKit."""
+
+# type annotations
+from typing import Callable
 
 
-__pkgname__   = 'streamkit'
-__version__   = '0.1.0'
-__authors__   = 'Geoffrey Lentner'
-__contact__   = '<glentner@purdue.edu>'
-__website__   = 'https://github.com/glentner/streamkit'
-__license__   = 'Apache License'
-__copyright__ = 'Copyright (c) Geoffrey Lentner 2019. All Rights Reserved.'
-__description__ = 'A simple, cross-platform SDK for pub-sub messaging in Python.'
+def log_exception(exc: Exception, log: Callable[..., None], status: int) -> int:
+    """Log the exception and return with `status`."""
+    log(exc)
+    return status
