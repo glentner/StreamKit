@@ -63,13 +63,13 @@ class Publishing(Thread):
                 pass
             finally:
                 publish(messages)
-                log.debug(f'added {len(messages)} messages')
+                log.info(f'added {len(messages)} messages')
                 for count, _ in enumerate(messages):
                     self.queue.task_done()
 
     def terminate(self) -> None:
         """Signal to shut down the thread."""
-        log.debug('stopping thread')
+        log.info('stopping thread')
         self.terminated = True
 
 
