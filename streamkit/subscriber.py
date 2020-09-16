@@ -60,7 +60,7 @@ class Subscription(Thread):
         """Poll database for new messages."""
         session = Session()  # NOTE: thread-local session
         time = latest(self.subscriber, self.topic, session).time
-        log.debug(f'starting {self.topic}-thread (latest: {time})')
+        log.info(f'starting {self.topic}-thread (latest: {time})')
         while not self.terminated:
             start = datetime.now()
             last = time
@@ -76,7 +76,7 @@ class Subscription(Thread):
             finally:
                 if last > time:
                     update(self.subscriber, self.topic, last, session)
-                    log.debug(f'updated {self.subscriber}:{self.topic} (latest: {last})')
+                    log.info(f'updated {self.subscriber}:{self.topic} (latest: {last})')
                     time = last
 
             elapsed = (datetime.now() - start).total_seconds()
@@ -86,7 +86,7 @@ class Subscription(Thread):
 
     def terminate(self) -> None:
         """Signal to shut down the thread."""
-        log.debug(f'stopping {self.subscriber}:{self.topic}')
+        log.info(f'stopping {self.subscriber}:{self.topic}')
         self.terminated = True
 
 
