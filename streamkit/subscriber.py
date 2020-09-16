@@ -172,7 +172,9 @@ class Subscriber:
         timeout = None if timeout is None else float(timeout)
         timeout = timeout if timeout is not None else self.timeout
         try:
-            return self.queue.get(timeout=timeout)
+            message = self.queue.get(timeout=timeout)
+            self.queue.task_done()
+            return message
         except Empty:
             log.info('timeout reached')
             return None
