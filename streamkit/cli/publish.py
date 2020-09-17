@@ -27,7 +27,6 @@ from cmdkit.app import Application, exit_status
 from cmdkit.cli import Interface
 
 
-# program name is constructed from module file name
 PROGRAM = f'streamkit publish'
 USAGE = f"""\
 usage: {PROGRAM} [-h] TOPIC LEVEL [FILE] [-b SIZE] [-t SEC]

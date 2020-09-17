@@ -83,7 +83,7 @@ class InitDatabaseApp(Application):
         if backend != 'sqlite':
             response = input(f'Connecting to {backend} database, proceed [Y/n]: ')
             if response in ('Yes', 'yes', 'Y', 'y'):
-                log.info('OK')
+                pass
             elif response in ('No', 'no', 'N', 'n'):
                 raise RuntimeError('stopping now')
             else:
@@ -92,6 +92,5 @@ class InitDatabaseApp(Application):
     @staticmethod
     def notify_config() -> None:
         """Log messages about database configuration."""
-        log.info('connecting')
         for name, value in db_config.items():
             log.debug(f'{name}: {value}')

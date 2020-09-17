@@ -29,7 +29,6 @@ from cmdkit.cli import Interface
 import toml
 
 
-# program name is constructed from module file name
 PROGRAM = f'streamkit config get'
 USAGE = f"""\
 usage: {PROGRAM} [-h] SECTION[...].VAR [--system | --user | --local]

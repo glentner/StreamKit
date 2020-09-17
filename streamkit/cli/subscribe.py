@@ -15,7 +15,6 @@ from typing import List
 
 # standard libs
 from functools import partial
-from queue import Empty
 
 # internal libs
 from ..core.config import ConfigurationError
@@ -28,7 +27,6 @@ from cmdkit.app import Application, exit_status
 from cmdkit.cli import Interface
 
 
-# program name is constructed from module file name
 PROGRAM = f'streamkit subscribe'
 USAGE = f"""\
 usage: {PROGRAM} [-h] NAME [TOPIC [TOPIC...]] [-b SIZE] [-p SEC] [-t SEC]
