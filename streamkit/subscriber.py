@@ -137,6 +137,7 @@ class Subscriber:
         """Start subscription threads."""
         for thread in self.threads:
             thread.start()
+            sleep(0.5)  # FIXME: avoid simultaneous get_subscriber()
 
     def stop(self) -> None:
         """Terminate all threads."""
