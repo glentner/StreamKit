@@ -14,6 +14,7 @@
 # standard libs
 import os
 import sys
+import ctypes
 import subprocess
 import functools
 
@@ -48,16 +49,19 @@ DEFAULT = Namespace({
 CWD = os.getcwd()
 HOME = os.getenv('HOME')
 if os.name == 'nt':
-    ROOT = False
-    SITE = 'user'
-    USER_SITE = os.path.join(os.getenv('APPDATA'), 'streamkit')
+    ROOT = ctypes.windll.shell32.IsUserAnAdmin() == 1
+    SITE = 'system' if ROOT else 'user'
+    ROOT_SITE = os.path.join(os.getenv('ProgramData'), 'StreamKit')
+    USER_SITE = os.path.join(os.getenv('AppData'), 'StreamKit')
 else:
     ROOT = os.getuid() == 0
     SITE = 'system' if ROOT else 'user'
+    ROOT_SITE = '/etc'
     USER_SITE = os.path.join(HOME, '.streamkit')
 
+
 CONF_PATH = {
-    'system': '/etc/streamkit.toml',  # only for POSIX
+    'system': os.path.join(ROOT_SITE, 'config.toml'),
     'user': os.path.join(USER_SITE, 'config.toml'),
     'local': os.path.join(CWD, '.streamkit', 'config.toml')
 }
