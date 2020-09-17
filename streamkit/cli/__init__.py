@@ -35,7 +35,7 @@ COMMANDS = {
 
 USAGE = f"""\
 usage: streamkit [-h] [-v] <command> [<args>...]
-Command-line tools for Streamkit.\
+Command-line tools for StreamKit.\
 """
 
 EPILOG = f"""\

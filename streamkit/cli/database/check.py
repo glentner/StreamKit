@@ -53,7 +53,7 @@ options:
 log = Logger(__name__)
 
 
-@functools.lru_cache(maxsize=None)
+@functools.lru_cache
 def tables() -> Dict[str, Table]:
     """Associate in-database table names with ORM tables."""
     return {table.name: table for table in Table.metadata.sorted_tables}
@@ -99,7 +99,6 @@ class CheckDatabaseApp(Application):
         if self.all_names:
             self.names = list(tables())
         else:
-            self.names = [name.upper() for name in self.names]
             for name in self.names:
                 if name not in tables():
                     raise ArgumentError(f'"{name}" is not a recognized table')
@@ -107,7 +106,6 @@ class CheckDatabaseApp(Application):
     @staticmethod
     def notify_config() -> None:
         """Log messages about database configuration."""
-        log.info('connecting')
         for name, value in db_config.items():
             log.debug(f'{name}: {value}')
 
