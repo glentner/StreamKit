@@ -28,7 +28,6 @@ from cmdkit.app import Application, exit_status
 from cmdkit.cli import Interface
 
 
-# program name is constructed from module file name
 PROGRAM = f'streamkit config edit'
 USAGE = f"""\
 usage: {PROGRAM} [-h] [--system | --user | --local]
@@ -79,7 +78,7 @@ class EditConfigApp(Application):
         config_path = None
         for key in ('local', 'user', 'system'):
             if getattr(self, key) is True:
-                config_path = CONF_PATH[SITE]
+                config_path = CONF_PATH[key]
                 site = key
 
         if not os.path.exists(config_path):
