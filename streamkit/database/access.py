@@ -8,24 +8,24 @@
 # You should have received a copy of the Apache License along with this program.
 # If not, see <https://www.apache.org/licenses/LICENSE-2.0>.
 
-"""Message application layer for StreamKit."""
+"""Access application layer for StreamKit."""
 
 
 # standard libs
 from datetime import datetime
+import logging
 
 # external libs
 from sqlalchemy.orm.exc import NoResultFound
 
 # internal libs
-from ..core.logging import Logger
 from .core.session import Session
-from .core.orm import Topic, Message, Access, Subscriber
+from .core.orm import Message, Access
 from .core.keys import get_topic, get_subscriber
 
 
-# module level logger
-log = Logger(__name__)
+# initialize module level logger
+log = logging.getLogger(__name__)
 
 
 def latest(subscriber: str, topic: str, session: Session = None) -> Access:

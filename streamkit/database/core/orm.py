@@ -13,7 +13,10 @@
 
 # type annotations
 from __future__ import annotations
-from typing import Dict, Any
+from typing import Tuple, Dict, Any
+
+# standard libs
+import logging
 
 # external libs
 from sqlalchemy import func
@@ -26,8 +29,8 @@ from .engine import schema
 from ...core.logging import Logger
 
 
-# module level logger
-log = Logger(__name__)
+# initialize module level logger
+log = logging.getLogger(__name__)
 
 
 Table = declarative_base()

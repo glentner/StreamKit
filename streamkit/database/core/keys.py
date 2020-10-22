@@ -13,17 +13,18 @@
 
 # standard libs
 import functools
+import logging
 
 # external libs
 from sqlalchemy.orm.exc import NoResultFound
 
 # internal libs
-from ...core.logging import Logger
 from .session import Session
 from .orm import Table, Level, Topic, Host, Subscriber
 
-# module level logger
-log = Logger(__name__)
+
+# initialize module level logger
+log = logging.getLogger(__name__)
 
 
 def __get(table: type, name: str, session: Session = None) -> Table:

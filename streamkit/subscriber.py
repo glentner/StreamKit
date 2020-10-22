@@ -12,23 +12,24 @@
 
 # type annotations
 from __future__ import annotations
-from typing import List, Iterator, Optional
+from typing import List, Dict, Iterator, Optional
 
 # standard libs
+import logging
 from datetime import datetime
 from time import sleep
 from threading import Thread
 from queue import Queue, Empty
 
 # internal libs
-from .core.logging import Logger
 from .database.message import Message, fetch
 from .database.access import latest, update
 from .database.core.session import Session
 
 
-# module level logger
-log = Logger(__name__)
+# initialize module level logger
+log = logging.getLogger(__name__)
+
 
 # shared parameters
 DEFAULT_BATCHSIZE: int = 10

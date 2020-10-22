@@ -17,18 +17,18 @@ from typing import TypeVar
 
 # standard libs
 import json
+import logging
 from datetime import datetime
 
 # internal libs
 from .engine import engine, db_config, schema
 from .session import Session
 from .orm import Table, tables
-from ...core.logging import Logger
 from ... import assets
 
 
-# module level logger
-log = Logger(__name__)
+# initialize module level logger
+log = logging.getLogger(__name__)
 
 
 def init() -> None:

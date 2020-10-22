@@ -12,23 +12,28 @@
 
 # type annotations
 from __future__ import annotations
-from typing import Optional, List, Dict, Any
+from typing import List, Dict, Any
 
 # standard libs
 from datetime import datetime
+import socket
+import logging
 
 # external libs
 from sqlalchemy.orm import joinedload
 
 # internal libs
-from ..core.logging import Logger, HOSTNAME
 from .core.orm import Message as _Message
 from .core.keys import get_level, get_topic, get_host
 from .core.session import Session
 
 
-# module level logger
-log = Logger(__name__)
+# initialize module level logger
+log = logging.getLogger(__name__)
+
+
+# single global instance
+HOST = socket.gethostname()
 
 
 class Message:

@@ -15,6 +15,7 @@
 from __future__ import annotations
 
 # standard libs
+import logging
 from urllib.parse import urlencode
 
 # external libs
@@ -22,12 +23,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.exc import ArgumentError
 
 # internal libs
-from ...core.logging import Logger
 from ...core.config import config, ConfigurationError
 
 
-# module level logger
-log = Logger(__name__)
+# initialize module level logger
+log = logging.getLogger(__name__)
 
 
 def get_url(**params) -> str:

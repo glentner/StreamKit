@@ -10,11 +10,13 @@
 
 """Publisher interface for StreamKit."""
 
+
 # type annotations
 from __future__ import annotations
 from typing import Optional
 
 # standard libs
+import logging
 from threading import Thread
 from queue import Queue, Empty
 
@@ -23,8 +25,8 @@ from .core.logging import Logger
 from .database.message import Message, publish
 
 
-# module level logger
-log = Logger(__name__)
+# initialize module level logger
+log = logging.getLogger(__name__)
 
 
 # shared parameters

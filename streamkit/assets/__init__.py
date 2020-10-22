@@ -10,6 +10,7 @@
 
 """Assets/templates required by StreamKit."""
 
+
 # type annotations
 from typing import List, Dict, IO, Union, Generator
 
@@ -18,13 +19,11 @@ import os
 import re
 import fnmatch
 import functools
-
-# internal libs
-from ..core.logging import Logger
+import logging
 
 
-# module level logger
-log = Logger(__name__)
+# initialize module level logger
+log = logging.getLogger(__name__)
 
 
 # either bytes or str depending on how the file was opened
@@ -139,3 +138,4 @@ def load_assets(pattern: str, regex: bool = False, **kwargs) -> Dict[str, FileDa
             the /assets directory. Use `mode='rb'` to return raw bytes data.
     """
     return {path: load_asset(path, **kwargs) for path in find_files(pattern, regex=regex)}
+

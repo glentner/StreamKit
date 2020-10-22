@@ -10,13 +10,14 @@
 
 """Check origin of configuration variable."""
 
+
 # standard libs
 import functools
+import logging
 
 # internal libs
 from ...core.config import CONF_PATH, config, ConfigurationError
 from ...core.exceptions import log_exception
-from ...core.logging import Logger
 
 # external libs
 from cmdkit.app import Application, exit_status
@@ -25,7 +26,7 @@ from cmdkit.cli import Interface
 
 PROGRAM = f'streamkit config which'
 USAGE = f"""\
-usage: {PROGRAM} [-h] SECTION[...].VAR 
+usage: {PROGRAM} [-h] SECTION[...].VAR
 {__doc__}\
 """
 
@@ -41,7 +42,7 @@ options:
 
 
 # initialize module level logger
-log = Logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class WhichConfigApp(Application):

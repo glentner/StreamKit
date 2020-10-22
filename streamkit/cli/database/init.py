@@ -10,12 +10,13 @@
 
 """Initialize database."""
 
+
 # standard libs
 import functools
+import logging
 
 # internal libs
 from ...core.config import ConfigurationError
-from ...core.logging import Logger
 from ...core.exceptions import log_exception
 from ...database.core.init import init, init_test_data, init_extensions
 from ...database.core.engine import db_config
@@ -43,7 +44,7 @@ options:
 
 
 # initialize module level logger
-log = Logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class InitDatabaseApp(Application):

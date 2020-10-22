@@ -10,16 +10,17 @@
 
 """Subscribe to messages."""
 
+
 # type annotations
 from typing import List
 
 # standard libs
+import logging
 from functools import partial
 
 # internal libs
 from ..core.config import ConfigurationError
 from ..core.exceptions import log_exception
-from ..core.logging import Logger
 from ..subscriber import Subscriber, DEFAULT_TIMEOUT, DEFAULT_BATCHSIZE, DEFAULT_POLL
 
 # external libs
@@ -49,7 +50,7 @@ options:
 
 
 # initialize module level logger
-log = Logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class SubscriberApp(Application):

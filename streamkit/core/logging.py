@@ -10,137 +10,46 @@
 
 """
 Logging configuration for StreamKit.
-
-StreamKit uses the `logalpha` package for logging functionality. All messages
-are written to <stderr> and should be redirected by their parent processes.
-
-Levels:
-    DEBUG      Low level notices (e.g., database connection).
-    INFO       Informational messages of general interest.
-    WARNING    Something unexpected or possibly problematic occurred.
-    ERROR      An error caused an action to not be completed.
-    CRITICAL   The entire application must halt.
-
-Handlers:
-    STANDARD   Simple colorized console output. (no metadata)
-    DETAILED   Detailed (syslog-style) messages (with metadata)
-
-Environment Variables:
-    STREAMKIT_LOGGING_LEVEL      INT or NAME of logging level.
-    STREAMKIT_LOGGING_HANDLER    STANDARD or DETAILED
 """
 
-# type annotations
-from __future__ import annotations
-from typing import List, Callable, Any
 
 # standard libraries
-import io
-import sys
 import socket
-from datetime import datetime
-from dataclasses import dataclass
+import logging as _logging
 
-# external libraries
-from logalpha import levels, colors, messages, handlers, loggers
-
-
-# get hostname from `socket` instead of `.config`
-HOSTNAME = socket.gethostname()
+# internal libs
+from .config import config
 
 
-# logging levels associated with integer value and color codes
-LEVELS = levels.Level.from_names(('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'))
-COLORS = colors.Color.from_names(('blue', 'green', 'yellow', 'red', 'magenta'))
-RESET = colors.Color.reset
+# cached for frequent use
+_HOST = socket.gethostname()
 
 
-# named logging levels
-DEBUG    = LEVELS[0]
-INFO     = LEVELS[1]
-WARNING  = LEVELS[2]
-ERROR    = LEVELS[3]
-CRITICAL = LEVELS[4]
-LEVELS_BY_NAME = {'DEBUG': DEBUG, 'INFO': INFO, 'WARNING': WARNING,
-                  'ERROR': ERROR, 'CRITICAL': CRITICAL}
+# escape sequences
+_ANSI_RESET = '\033[0m'
+_ANSI_CODES = {prefix: {color: '\033[{prefix}{num}m'.format(prefix=i + 3, num=j)
+                        for j, color in enumerate(['black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white'])}
+               for i, prefix in enumerate(['foreground', 'background'])}
+_LEVEL_COLORS = {'debug': 'blue', 'info': 'green', 'warning': 'yellow',
+                 'error': 'red', 'critical': 'magenta'}
 
 
-# NOTE: global handler list lets `Logger` instances aware of changes
-#       to other logger's handlers. (i.e., changing from StandardHandler to DetailedHandler).
-_handlers: List[handlers.Handler] = []
+class LogRecord(_logging.LogRecord):
+    """Extends :class:`logging.LogRecord` to include a hostname and ANSI color codes."""
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.hostname = _HOST
+        self.ansi_color = _ANSI_CODES['foreground'][_LEVEL_COLORS[self.levelname.lower()]]
+        self.ansi_reset = _ANSI_RESET
 
 
-@dataclass
-class Message(messages.Message):
-    """Message data class (level, content, timestamp, topic, source, host)."""
-    level: levels.Level
-    content: Any
-    topic: str
-    time: datetime
-    host: str = HOSTNAME
+# inject factory back into logging library
+_logging.setLogRecordFactory(LogRecord)
 
-
-class Logger(loggers.Logger):
-    """Logger for StreamKit."""
-
-    levels = LEVELS
-    colors = COLORS
-
-    topic: str = 'streamkit'
-    Message: type = Message
-    callbacks: dict = {'time': datetime.now, }
-
-    def __init__(self, topic: str) -> None:
-        """Setup logger with custom callback for `topic`."""
-        super().__init__()
-        self.topic = topic
-        self.callbacks = {**self.callbacks, 'topic': (lambda: topic)}
-
-    @property
-    def handlers(self) -> List[handlers.Handler]:
-        """Override of local handlers to global list."""
-        global _handlers
-        return _handlers
-
-    # NOTE: dynamic instrumentation makes linters sad
-    debug: Callable
-    info: Callable
-    warning: Callable
-    error: Callable
-    critical: Callable
-
-
-@dataclass
-class StandardHandler(handlers.Handler):
-    """Write basic colorized messages to standard error."""
-
-    level: levels.Level
-    resource: io.TextIOWrapper = sys.stderr
-
-    def format(self, msg: Message) -> str:
-        """Colorize the log level and with only the message."""
-        COLOR = Logger.colors[msg.level.value].foreground
-        return f'{COLOR}{msg.level.name:<8}{RESET} {msg.topic}: {msg.content}'
-
-
-@dataclass
-class DetailedHandler(handlers.Handler):
-    """Write detailed (syslog-like) messages to standard error."""
-
-    level: levels.Level
-    resource: io.TextIOWrapper = sys.stderr
-
-    def format(self, msg: Message) -> str:
-        """Syslog style with padded spaces."""
-        ts = msg.time.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        return f'{ts} {msg.host} {msg.level.name:<8} [{msg.topic}] {msg.content}'
-
-
-# persistent instances (STANDARD_HANDLER is the default)
-STANDARD_HANDLER = StandardHandler(WARNING)
-DETAILED_HANDLER = DetailedHandler(WARNING)
-_handlers.append(STANDARD_HANDLER)
-
-
-HANDLERS_BY_NAME = {'STANDARD': STANDARD_HANDLER,
-                    'DETAILED': DETAILED_HANDLER}
+# configuration
+def configure() -> None:
+    """Configure with func:`logging.basicConfig` for command-line."""
+    _logging.basicConfig(level=getattr(_logging, config['logging']['level'].upper()),
+                         format=config['logging']['format'],
+                         datefmt=config['logging']['datefmt'])

@@ -10,28 +10,22 @@
 
 """Command-line interface for StreamKit."""
 
+
 # standard libs
 import sys
+import logging
 
 # internal libs
-from ..core.logging import Logger
 from ..__meta__ import __version__, __website__
+from ..core.logging import configure as configure_logging
 
 # external libs
-from cmdkit import logging as _cmdkit_logging
 from cmdkit.app import Application, ApplicationGroup
 from cmdkit.cli import Interface
 
 # command groups
 from . import config, subscribe, publish, database
 
-
-COMMANDS = {
-    'config': config.ConfigApp,
-    'publish': publish.PublisherApp,
-    'subscribe': subscribe.SubscriberApp,
-    'database': database.DatabaseApp,
-}
 
 USAGE = f"""\
 usage: streamkit [-h] [-v] <command> [<args>...]
@@ -64,12 +58,16 @@ learn more about their usage.
 
 
 # initialize module level logger
-log = Logger('streamkit')
+log = logging.getLogger(__name__)
+
+# basic configuration will write to stderr,
+# formatting and level from config file
+configure_logging()
 
 
 # inject logger back into cmdkit library
-_cmdkit_logging.log = log
-Application.log_error = log.critical
+Application.log_critical = log.critical
+Application.log_exception = log.exception
 
 
 class StreamKit(ApplicationGroup):
@@ -80,7 +78,10 @@ class StreamKit(ApplicationGroup):
     interface.add_argument('command')
 
     command = None
-    commands = COMMANDS
+    commands = {'config': config.ConfigApp,
+                'publish': publish.PublisherApp,
+                'subscribe': subscribe.SubscriberApp,
+                'database': database.DatabaseApp}
 
 
 def main() -> int:
