@@ -13,17 +13,18 @@
 
 # standard libs
 import functools
+import logging
 
 # external libs
 from sqlalchemy.orm.exc import NoResultFound
 
 # internal libs
-from ...core.logging import Logger
 from .session import Session
 from .orm import Table, Level, Topic, Host, Subscriber
 
-# module level logger
-log = Logger(__name__)
+
+# initialize module level logger
+log = logging.getLogger(__name__)
 
 
 def __get(table: type, name: str, session: Session = None) -> Table:
@@ -55,7 +56,7 @@ def __get(table: type, name: str, session: Session = None) -> Table:
     return table(id=record.id, name=record.name)  # NOTE: enforces attribute refresh
 
 
-@functools.lru_cache
+@functools.lru_cache(maxsize=None)
 def get_level(name: str, session: Session = None) -> Level:
     """
     Fetch the existing `Level` record. Creates a new one if necessary.
@@ -74,7 +75,7 @@ def get_level(name: str, session: Session = None) -> Level:
     return __get(Level, name, session)
 
 
-@functools.lru_cache
+@functools.lru_cache(maxsize=None)
 def get_topic(name: str, session: Session = None) -> Topic:
     """
     Fetch the existing `Topic` record. Creates a new one if necessary.
@@ -93,7 +94,7 @@ def get_topic(name: str, session: Session = None) -> Topic:
     return __get(Topic, name, session)
 
 
-@functools.lru_cache
+@functools.lru_cache(maxsize=None)
 def get_host(name: str, session: Session = None) -> Host:
     """
     Fetch the existing `Host` record. Creates a new one if necessary.
@@ -112,7 +113,7 @@ def get_host(name: str, session: Session = None) -> Host:
     return __get(Host, name, session)
 
 
-@functools.lru_cache
+@functools.lru_cache(maxsize=None)
 def get_subscriber(name: str, session: Session = None) -> Subscriber:
     """
     Fetch the existing `Subscriber` record. Creates a new one if necessary.

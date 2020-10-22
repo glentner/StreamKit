@@ -10,21 +10,22 @@
 
 """Publisher interface for StreamKit."""
 
+
 # type annotations
 from __future__ import annotations
 from typing import Optional
 
 # standard libs
+import logging
 from threading import Thread
 from queue import Queue, Empty
 
 # internal libs
-from .core.logging import Logger
 from .database.message import Message, publish
 
 
-# module level logger
-log = Logger(__name__)
+# initialize module level logger
+log = logging.getLogger(__name__)
 
 
 # shared parameters
@@ -32,7 +33,7 @@ DEFAULT_BATCHSIZE: int = 10
 DEFAULT_TIMEOUT: float = 5.0
 
 
-class Publishing(Thread):
+class QueueThread(Thread):
     """Enqueue and flush messages to the database."""
 
     queue: Queue = None
@@ -49,7 +50,8 @@ class Publishing(Thread):
         super().__init__(daemon=True)
 
     def run(self) -> None:
-        """Periodically poll database for new messages."""
+        """Get messages from the queue and publish to the database."""
+        log.debug('starting publisher-thread')
         messages = []
         while not self.terminated:
             try:
@@ -58,18 +60,18 @@ class Publishing(Thread):
                     if not self.terminated:
                         message = Message(**self.queue.get(timeout=self.timeout))
                         messages.append(message)
-                        log.debug(f'buffering message [topic={message.topic}]')
             except Empty:
                 pass
             finally:
-                publish(messages)
-                log.info(f'added {len(messages)} messages')
-                for count, _ in enumerate(messages):
-                    self.queue.task_done()
+                if messages:
+                    publish(messages)
+                    log.info(f'added {len(messages)} messages')
+                    for count, _ in enumerate(messages):
+                        self.queue.task_done()
 
     def terminate(self) -> None:
         """Signal to shut down the thread."""
-        log.info('stopping thread')
+        log.debug('stopping publisher-thread')
         self.terminated = True
 
 
@@ -79,12 +81,12 @@ class Publisher:
 
     Example:
         >>> with Publisher(batchsize=10) as stream:
-        ...     stream.write('hello, world!', topic='example', level='info')
+        ...     stream.write('hello, world!', topic='example', level='INFO')
     """
 
     queue: Queue = None
     topic: str = None
-    thread: Publishing = None
+    thread: QueueThread = None
     batchsize: Optional[int] = DEFAULT_BATCHSIZE
     timeout: Optional[float] = DEFAULT_TIMEOUT
 
@@ -99,18 +101,17 @@ class Publisher:
             level (str):
                 Default level name (optional).
             batchsize (int):
-                Maximum number of messages to return in a batch.
+                Number of messages to accumulate before committing.
                 Default to `DEFAULT_BATCHSIZE`.
             timeout (float):
-                Seconds to wait on new messages before committing
-                current batch to the database. Default to `DEFAULT_TIMEOUT`.
+                Seconds to wait on new messages before committing.
+                Default to `DEFAULT_TIMEOUT`.
         """
         self.topic = None if topic is None else str(topic)
         self.level = None if level is None else str(level)
         self.queue = Queue(maxsize=2*batchsize)
         self.timeout = float(timeout)
-        self.thread = Publishing(queue=self.queue, batchsize=batchsize,
-                                 timeout=self.timeout)
+        self.thread = QueueThread(queue=self.queue, batchsize=batchsize, timeout=self.timeout)
 
     def start(self) -> None:
         """Start subscription threads."""
@@ -120,6 +121,7 @@ class Publisher:
         """Terminate all threads."""
         self.queue.join()
         self.thread.terminate()
+        self.thread.join()
 
     def __enter__(self) -> Publisher:
         """Start all threads."""

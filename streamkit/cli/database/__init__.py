@@ -16,12 +16,13 @@ from cmdkit.app import ApplicationGroup
 from cmdkit.cli import Interface
 
 # commands
-from . import init, check
+from . import init, check, dump
 
 
 COMMANDS = {
     'init': init.InitDatabaseApp,
     'check': check.CheckDatabaseApp,
+    'dump': dump.DumpDatabaseApp,
 }
 
 
@@ -37,6 +38,7 @@ HELP = f"""\
 commands:
 init                     {init.__doc__}
 check                    {check.__doc__}
+dump                     {dump.__doc__}
 
 options:
 -h, --help               Show this message and exit.

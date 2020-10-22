@@ -10,13 +10,14 @@
 
 """Initialize default configuration file."""
 
+
 # standard libs
 import os
 import functools
+import logging
 
 # internal libs
 from ...core.config import ConfigurationError, init_config, CONF_PATH
-from ...core.logging import Logger
 from ...core.exceptions import log_exception
 
 # external libs
@@ -41,7 +42,7 @@ options:
 
 
 # initialize module level logger
-log = Logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class InitConfigApp(Application):

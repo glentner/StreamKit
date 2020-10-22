@@ -10,16 +10,17 @@
 
 """Subscribe to messages."""
 
+
 # type annotations
 from typing import List
 
 # standard libs
+import logging
 from functools import partial
 
 # internal libs
 from ..core.config import ConfigurationError
 from ..core.exceptions import log_exception
-from ..core.logging import Logger
 from ..subscriber import Subscriber, DEFAULT_TIMEOUT, DEFAULT_BATCHSIZE, DEFAULT_POLL
 
 # external libs
@@ -49,7 +50,7 @@ options:
 
 
 # initialize module level logger
-log = Logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class SubscriberApp(Application):
@@ -84,5 +85,4 @@ class SubscriberApp(Application):
         with Subscriber(self.name, self.topics, batchsize=self.batch_size,
                         poll=self.poll_interval, timeout=self.timeout) as stream:
             for message in stream:
-                timestamp = message.time.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-                print(f'{timestamp} {message.host} {message.topic} {message.level} {message.text}')
+                print(f'{message.time} {message.host} {message.topic} {message.level} {message.text}')

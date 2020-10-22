@@ -10,6 +10,7 @@
 
 """Set variable in configuration file."""
 
+
 # type annotations
 from __future__ import annotations
 from typing import TypeVar
@@ -17,11 +18,11 @@ from typing import TypeVar
 # standard libs
 import os
 import functools
+import logging
 
 # internal libs
 from ...core.config import get_site, SITE, init_config, update_config, ConfigurationError
 from ...core.exceptions import log_exception
-from ...core.logging import Logger
 
 # external libs
 from cmdkit.app import Application, exit_status
@@ -30,7 +31,7 @@ from cmdkit.cli import Interface, ArgumentError
 
 PROGRAM = f'streamkit config set'
 USAGE = f"""\
-usage: {PROGRAM} [-h] SECTION[...].VAR VALUE [--system | --user | --local] 
+usage: {PROGRAM} [-h] SECTION[...].VAR VALUE [--system | --user | --local]
 {__doc__}\
 """
 
@@ -50,7 +51,7 @@ options:
 
 
 # initialize module level logger
-log = Logger(__name__)
+log = logging.getLogger(__name__)
 
 
 SmartType = TypeVar('SmartType', int, float, str)
