@@ -79,7 +79,7 @@ def init_config(key: str = None) -> None:
             toml.dump(default, config_file)
 
 
-@functools.lru_cache(maxsize=1)
+@functools.lru_cache(maxsize=None)
 def get_site(key: str = None) -> str:
     """
     Return the runtime site.
