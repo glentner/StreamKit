@@ -10,16 +10,17 @@
 
 """Publish messages."""
 
+
 # standard libs
 from sys import stdin
 from io import TextIOWrapper
 from functools import partial
 from argparse import FileType
+import logging
 
 # internal libs
 from ..core.config import ConfigurationError
 from ..core.exceptions import log_exception
-from ..core.logging import Logger
 from ..publisher import Publisher, DEFAULT_TIMEOUT, DEFAULT_BATCHSIZE
 
 # external libs
@@ -49,7 +50,7 @@ options:
 
 
 # initialize module level logger
-log = Logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class PublisherApp(Application):

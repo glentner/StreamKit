@@ -10,6 +10,7 @@
 
 """Database scoped session binding for StreamKit."""
 
+
 # external libs
 from sqlalchemy.orm import sessionmaker, scoped_session
 

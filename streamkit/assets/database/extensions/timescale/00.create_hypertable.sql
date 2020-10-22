@@ -10,3 +10,6 @@
  */
 
 SELECT create_hypertable('{{ SCHEMA }}.message', 'time', chunk_time_interval => interval '1 day');
+-- ALTER TABLE {{ SCHEMA }}.message SET (timescaledb.compress,
+--     timescaledb.compress_orderby = 'time DESC',
+--     timescaledb.compress_segmentby = 'topic_id')

@@ -17,18 +17,18 @@ from typing import TypeVar
 
 # standard libs
 import json
+import logging
 from datetime import datetime
 
 # internal libs
 from .engine import engine, db_config, schema
 from .session import Session
 from .orm import Table, tables
-from ...core.logging import Logger
 from ... import assets
 
 
-# module level logger
-log = Logger(__name__)
+# initialize module level logger
+log = logging.getLogger(__name__)
 
 
 def init() -> None:
@@ -40,8 +40,8 @@ __VT = TypeVar('__VT', int, float, str)
 __RT = TypeVar('__RT', int, float, str, datetime)
 def _coerce_datetime(field: str, value: __VT) -> __RT:
     """Passively coerce formatted datetime strings if necessary."""
-    if isinstance(value, str) and field.endswith('created'):
-        return datetime.strptime(value, '%Y-%m-%d')
+    if isinstance(value, str) and field.endswith('time'):
+        return datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
     else:
         return value
 

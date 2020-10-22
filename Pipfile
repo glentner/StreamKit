@@ -19,8 +19,7 @@ twine = ">=3.2.0"
 psycopg2 = ">=2.8.5"
 
 [packages]
-logalpha = ">=2.0.2"
-cmdkit = ">=1.5.4"
+cmdkit = ">=2.0.2"
 toml = ">=0.10.1"
 sqlalchemy = ">=1.3.19"
 streamkit = {editable = true, path = "."}

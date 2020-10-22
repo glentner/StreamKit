@@ -10,6 +10,7 @@
 
 """Core exceptions and error handling within StreamKit."""
 
+
 # type annotations
 from typing import Callable
 

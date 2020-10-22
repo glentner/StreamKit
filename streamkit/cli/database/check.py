@@ -10,16 +10,17 @@
 
 """Report on database tables."""
 
+
 # type annotations
 from __future__ import annotations
 from typing import List, Dict
 
 # standard libs
 import functools
+import logging
 
 # internal libs
 from ...core.config import ConfigurationError
-from ...core.logging import Logger
 from ...core.exceptions import log_exception
 from ...database.core.orm import Table
 from ...database.core.session import Session
@@ -50,10 +51,10 @@ options:
 
 
 # initialize module level logger
-log = Logger(__name__)
+log = logging.getLogger(__name__)
 
 
-@functools.lru_cache
+@functools.lru_cache(maxsize=None)
 def tables() -> Dict[str, Table]:
     """Associate in-database table names with ORM tables."""
     return {table.name: table for table in Table.metadata.sorted_tables}

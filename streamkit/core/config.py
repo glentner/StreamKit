@@ -10,57 +10,58 @@
 
 """Runtime configuration for StreamKit."""
 
+# type annotations
+from typing import Dict
 
 # standard libs
 import os
-import sys
 import ctypes
 import subprocess
 import functools
+import logging
 
 # external libs
 import toml
 from cmdkit.config import Namespace, Configuration
-from cmdkit.app import exit_status
 
 # internal libs
-from .logging import Logger, HANDLERS_BY_NAME, LEVELS_BY_NAME, LEVELS
 from ..assets import load_asset
 
 
-# module level logger
-log = Logger(__name__)
+# initialize module level logger
+log = logging.getLogger(__name__)
 
 
 # environment variables and configuration files are automatically
 # depth-first merged with defaults
-DEFAULT = Namespace({
+DEFAULT: Namespace = Namespace({
     'database': {
             'backend': 'sqlite',
             'database': ':memory:'
     },
     'logging': {
         'level': 'warning',
-        'handler': 'standard',
+        'format': '%(asctime)s %(hostname)s %(levelname)-8s [%(name)s] %(msg)s',
+        'datefmt': '%Y-%m-%d %H:%M:%S'
     }
 })
 
 
-CWD = os.getcwd()
-HOME = os.getenv('HOME')
+CWD: str = os.getcwd()
+HOME: str = os.getenv('HOME')
 if os.name == 'nt':
-    ROOT = ctypes.windll.shell32.IsUserAnAdmin() == 1
-    SITE = 'system' if ROOT else 'user'
-    ROOT_SITE = os.path.join(os.getenv('ProgramData'), 'StreamKit')
-    USER_SITE = os.path.join(os.getenv('AppData'), 'StreamKit')
+    ROOT: str = ctypes.windll.shell32.IsUserAnAdmin() == 1
+    SITE: str = 'system' if ROOT else 'user'
+    ROOT_SITE: str = os.path.join(os.getenv('ProgramData'), 'StreamKit')
+    USER_SITE: str = os.path.join(os.getenv('AppData'), 'StreamKit')
 else:
-    ROOT = os.getuid() == 0
-    SITE = 'system' if ROOT else 'user'
-    ROOT_SITE = '/etc'
-    USER_SITE = os.path.join(HOME, '.streamkit')
+    ROOT: str = os.getuid() == 0
+    SITE: str = 'system' if ROOT else 'user'
+    ROOT_SITE: str = '/etc'
+    USER_SITE: str = os.path.join(HOME, '.streamkit')
 
 
-CONF_PATH = {
+CONF_PATH: Dict[str, str] = {
     'system': os.path.join(ROOT_SITE, 'config.toml'),
     'user': os.path.join(USER_SITE, 'config.toml'),
     'local': os.path.join(CWD, '.streamkit', 'config.toml')
@@ -78,7 +79,7 @@ def init_config(key: str = None) -> None:
             toml.dump(default, config_file)
 
 
-@functools.lru_cache(maxsize=1)
+@functools.lru_cache(maxsize=None)
 def get_site(key: str = None) -> str:
     """
     Return the runtime site.
@@ -146,28 +147,3 @@ def update_config(site: str, data: dict) -> None:
                                new=Namespace(data))
     # commit to file
     new_config._master.to_local(CONF_PATH[site])  # noqa: accessing protected member
-
-
-# setup logging with new info from configuration
-LOGGING_LEVEL = config['logging']['level']
-try:
-    LOGGING_LEVEL = LEVELS_BY_NAME[str(LOGGING_LEVEL).upper()]
-except KeyError:
-    try:
-        LOGGING_LEVEL = LEVELS[int(LOGGING_LEVEL)]
-    except (ValueError, IndexError):
-        log.critical(f'unknown level: {LOGGING_LEVEL}')
-        sys.exit(exit_status.bad_config)
-
-
-LOGGING_HANDLER = config['logging']['handler'].upper()
-try:
-    LOGGING_HANDLER = HANDLERS_BY_NAME[LOGGING_HANDLER]
-except KeyError:
-    log.critical(f'unknown handler: {LOGGING_HANDLER}')
-    sys.exit(exit_status.bad_config)
-
-
-# set initial handler by environment variable or default
-LOGGING_HANDLER.level = LOGGING_LEVEL
-log.handlers[0] = LOGGING_HANDLER

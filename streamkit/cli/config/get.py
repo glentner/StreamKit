@@ -10,6 +10,7 @@
 
 """Get variable from configuration file."""
 
+
 # type annotations
 from __future__ import annotations
 from typing import Mapping, Any
@@ -17,11 +18,11 @@ from typing import Mapping, Any
 # standard libs
 import os
 import functools
+import logging
 
 # internal libs
 from ...core.config import SITE, CONF_PATH, expand_parameters, ConfigurationError
 from ...core.exceptions import log_exception
-from ...core.logging import Logger
 
 # external libs
 from cmdkit.app import Application, exit_status
@@ -50,7 +51,7 @@ options:
 
 
 # initialize module level logger
-log = Logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class GetConfigApp(Application):

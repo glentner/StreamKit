@@ -8,5 +8,4 @@
 # You should have received a copy of the Apache License along with this program.
 # If not, see <https://www.apache.org/licenses/LICENSE-2.0>.
 
-"""Core systems within StreamKit."""
-
+"""Additional integrations based on StreamKit."""
