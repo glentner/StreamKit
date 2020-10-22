@@ -49,7 +49,7 @@ setup(
     packages         = find_packages(),
     long_description = long_description,
     long_description_content_type = 'text/x-rst',
-    classifiers      = ['Development Status :: 1 - Planning',
+    classifiers      = ['Development Status :: 3 - Beta',
                         'Programming Language :: Python :: 3',
                         'Programming Language :: Python :: 3.8',
                         'Programming Language :: Python :: 3.9',
