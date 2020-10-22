@@ -85,5 +85,4 @@ class SubscriberApp(Application):
         with Subscriber(self.name, self.topics, batchsize=self.batch_size,
                         poll=self.poll_interval, timeout=self.timeout) as stream:
             for message in stream:
-                timestamp = message.time.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-                print(f'{timestamp} {message.host} {message.topic} {message.level} {message.text}')
+                print(f'{message.time} {message.host} {message.topic} {message.level} {message.text}')

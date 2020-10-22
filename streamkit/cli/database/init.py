@@ -37,8 +37,9 @@ HELP = f"""\
 {USAGE}
 
 options:
+    --echo             Dump SQL as emitted. 
     --test             Insert test dataset.
-    --ext              Initialize extensions.
+    --ext              Initialize with extensions (if applicable).
 -h, --help             Show this message and exit.\
 """
 
@@ -51,12 +52,16 @@ class InitDatabaseApp(Application):
     """Application class for database init entry-point."""
 
     interface = Interface(PROGRAM, USAGE, HELP)
+    ALLOW_NOARGS = True
 
     include_test_data: bool = False
     interface.add_argument('--test', action='store_true', dest='include_test_data')
 
     include_extensions: bool = False
     interface.add_argument('--ext', action='store_true', dest='include_extensions')
+
+    echo: bool = False
+    interface.add_argument('--echo', action='store_true')
 
     exceptions = {
         RuntimeError: functools.partial(log_exception, log=log.critical,
@@ -70,7 +75,7 @@ class InitDatabaseApp(Application):
     def run(self) -> None:
         """Business logic of command."""
         self.check_backend()
-        self.notify_config()
+        self.config_engine()
         init()
         if self.include_extensions:
             init_extensions()
@@ -86,12 +91,14 @@ class InitDatabaseApp(Application):
             if response in ('Yes', 'yes', 'Y', 'y'):
                 pass
             elif response in ('No', 'no', 'N', 'n'):
-                raise RuntimeError('stopping now')
+                raise RuntimeError('Stopping now')
             else:
-                raise RuntimeError('response not understood')
+                raise RuntimeError('Response not understood')
 
-    @staticmethod
-    def notify_config() -> None:
-        """Log messages about database configuration."""
-        for name, value in db_config.items():
-            log.debug(f'{name}: {value}')
+    def config_engine(self) -> None:
+        """Set `echo` parameter for engine."""
+        if self.echo:
+            from ...database.core.engine import engine
+            engine.echo = True
+            for name, value in db_config.items():
+                log.debug(f'{name}: {value}')
