@@ -29,7 +29,7 @@ with open('README.rst', mode='r') as readme:
 
 
 # core dependencies
-DEPENDENCIES = ['logalpha>=2.0.2', 'cmdkit>=1.5.4', 'toml>=0.10.1',
+DEPENDENCIES = ['cmdkit>=2.0.2', 'toml>=0.10.1',
                 'sqlalchemy>=1.3.19', ]
 
 # add dependencies for readthedocs.io
