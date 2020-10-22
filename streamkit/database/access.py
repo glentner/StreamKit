@@ -30,20 +30,22 @@ log = logging.getLogger(__name__)
 
 def latest(subscriber: str, topic: str, session: Session = None) -> Access:
     """
-    Update the access record for the given `consumer` on a
-    `topic` with the most recent message `id` received.
+    Query for latest access record for the given `subscriber` and `topic`.
+    If no previous access exists, the timestamp of the most recent message
+    on the `topic` will be used to create a new access record. If no message
+    exists on this topic, the current timestamp is used.
 
     Args:
         subscriber (str):
             Name of the subscriber.
         topic (str):
             Name of the topic.
-        session (`.Session`):
+        session (:class:`Session`):
             An existing session (optional).
 
     Returns:
-        latest (Access):
-            Latest `.Access` record.
+        latest (:class:`Access`):
+            Latest access record.
     """
     session = session or Session()
     subscriber_id = get_subscriber(subscriber, session).id
@@ -98,3 +100,4 @@ def update(subscriber: str, topic: str, time: datetime, session: Session = None)
                         topic_id=topic_id, time=time)
         session.add(access)
         session.commit()
+

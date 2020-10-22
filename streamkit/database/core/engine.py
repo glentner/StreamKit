@@ -86,10 +86,15 @@ def get_url(**params) -> str:
 
 
 db_config = config['database'].copy()
+
+# NOTE: For TimescaleDB we actually are PostgreSQL
+overrides = dict()
+if db_config['backend'] in ('timescale', 'timescaledb'):
+    overrides['backend'] = 'postgres'
+
 schema = db_config.pop('schema', None)
 connect_args = db_config.pop('connect_args', {})
-url = get_url(**db_config)
-
+url = get_url(**{**db_config, **overrides})
 
 try:
     engine = create_engine(url, connect_args=connect_args)

@@ -40,6 +40,7 @@ class Message:
     """
     A message associates content with metadata about its origin and context.
     """
+    id: int = None
     time: datetime = None
     topic: str = None
     level: str = None
@@ -49,10 +50,11 @@ class Message:
     def __init__(self, **fields) -> None:
         """Initialize directly from `fields`."""
         try:
+            self.id = fields.pop('id', None)
             self.time = fields.pop('time', datetime.utcnow())
             self.topic = fields.pop('topic')
             self.level = fields.pop('level')
-            self.host = fields.pop('host', HOSTNAME)
+            self.host = fields.pop('host', HOST)
             self.text = fields.pop('text')
         except KeyError as field:
             raise AttributeError(f'Message.{field} is required.') from field
@@ -61,12 +63,12 @@ class Message:
                 raise AttributeError(f'Message.{field}')
 
     def __repr__(self) -> str:
-        return (f'Message(time={repr(self.time)}, topic={repr(self.topic)}, level={repr(self.level)},'
-                f' host={repr(self.host)}, text={repr(self.text)})')
+        return (f'Message(id={repr(self.id)}, time={repr(self.time)}, topic={repr(self.topic)}, '
+                f'level={repr(self.level)}, host={repr(self.host)}, text={repr(self.text)})')
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert message to dictionary."""
-        return {'time': self.time, 'topic': self.topic, 'level': self.level,
+        return {'id': self.id, 'time': self.time, 'topic': self.topic, 'level': self.level,
                 'host': self.host, 'text': self.text}
 
     def to_record(self, session: Session = None) -> _Message:
@@ -82,7 +84,8 @@ class Message:
                 The message record (ORM).
         """
         session = session or Session()
-        return _Message(time=self.time,
+        return _Message(id=self.id,
+                        time=self.time,
                         topic_id=get_topic(self.topic, session).id,
                         level_id=get_level(self.level, session).id,
                         host_id=get_host(self.host, session).id,
@@ -124,12 +127,14 @@ def fetch(topic: str, time: datetime, limit: int, session: Session = None) -> Li
             List of messages.
     """
     session = session or Session()
-    return [Message(time=msg.time, topic=msg.topic.name, level=msg.level.name,
-                    host=msg.host.name, text=msg.text)
+    return [Message(id=msg.id, time=msg.time, topic=msg.topic.name,
+                    level=msg.level.name, host=msg.host.name, text=msg.text)
             for msg in (session.query(_Message).
                         options(joinedload(_Message.topic)).
                         options(joinedload(_Message.level)).
                         options(joinedload(_Message.host)).
                         filter(_Message.time > time).
                         filter(_Message.topic_id == get_topic(topic, session).id).
+                        order_by(_Message.time).
                         limit(limit))]
+
