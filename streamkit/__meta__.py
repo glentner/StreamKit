@@ -14,7 +14,7 @@
 __pkgname__   = 'streamkit'
 __version__   = '0.2.1'
 __authors__   = 'Geoffrey Lentner'
-__contact__   = '<glentner@purdue.edu>'
+__contact__   = 'glentner@purdue.edu'
 __website__   = 'https://github.com/glentner/streamkit'
 __license__   = 'Apache License'
 __copyright__ = 'Copyright (c) Geoffrey Lentner 2019. All Rights Reserved.'
