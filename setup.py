@@ -12,25 +12,26 @@
 
 # standard libs
 import os
+import re
 from setuptools import setup, find_packages
 
-# internal libs
-from streamkit.__meta__ import (__pkgname__,
-                                __version__,
-                                __authors__,
-                                __contact__,
-                                __license__,
-                                __website__,
-                                __description__)
 
-
+# get long description from README.rst
 with open('README.rst', mode='r') as readme:
     long_description = readme.read()
 
 
+# get package metadata by parsing __meta__ module
+with open('streamkit/__meta__.py', mode='r') as source:
+    content = source.read().strip()
+    metadata = {key: re.search(key + r'\s*=\s*[\'"]([^\'"]*)[\'"]', content).group(1)
+                for key in ['__pkgname__', '__version__', '__authors__', '__contact__',
+                            '__description__', '__license__', '__website__']}
+
+
 # core dependencies
-DEPENDENCIES = ['cmdkit>=2.0.2', 'toml>=0.10.1',
-                'sqlalchemy>=1.3.19', ]
+DEPENDENCIES = ['cmdkit>=2.0.2', 'toml>=0.10.1', 'sqlalchemy>=1.3.19', ]
+
 
 # add dependencies for readthedocs.io
 if os.environ.get('READTHEDOCS') == 'True':
@@ -38,14 +39,14 @@ if os.environ.get('READTHEDOCS') == 'True':
 
 
 setup(
-    name             = __pkgname__,
-    version          = __version__,
-    author           = __authors__,
-    author_email     = __contact__,
-    description      = __description__,
-    license          = __license__,
+    name             = metadata['__pkgname__'],
+    version          = metadata['__version__'],
+    author           = metadata['__authors__'],
+    author_email     = metadata['__contact__'],
+    description      = metadata['__description__'],
+    license          = metadata['__license__'],
     keywords         = 'pub-sub message broker',
-    url              = __website__,
+    url              = metadata['__website__'],
     packages         = find_packages(),
     long_description = long_description,
     long_description_content_type = 'text/x-rst',
