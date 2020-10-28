@@ -48,7 +48,7 @@ class LogRecord(_logging.LogRecord):
 _logging.setLogRecordFactory(LogRecord)
 
 # configuration
-def configure() -> None:
+def initialize_logging() -> None:
     """Configure with func:`logging.basicConfig` for command-line."""
     _logging.basicConfig(level=getattr(_logging, config['logging']['level'].upper()),
                          format=config['logging']['format'],

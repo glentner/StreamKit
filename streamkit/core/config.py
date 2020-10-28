@@ -50,12 +50,12 @@ DEFAULT: Namespace = Namespace({
 CWD: str = os.getcwd()
 HOME: str = os.getenv('HOME')
 if os.name == 'nt':
-    ROOT: str = ctypes.windll.shell32.IsUserAnAdmin() == 1
+    ROOT: bool = ctypes.windll.shell32.IsUserAnAdmin() == 1
     SITE: str = 'system' if ROOT else 'user'
     ROOT_SITE: str = os.path.join(os.getenv('ProgramData'), 'StreamKit')
     USER_SITE: str = os.path.join(os.getenv('AppData'), 'StreamKit')
 else:
-    ROOT: str = os.getuid() == 0
+    ROOT: bool = os.getuid() == 0
     SITE: str = 'system' if ROOT else 'user'
     ROOT_SITE: str = '/etc'
     USER_SITE: str = os.path.join(HOME, '.streamkit')

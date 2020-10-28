@@ -30,7 +30,7 @@ with open('streamkit/__meta__.py', mode='r') as source:
 
 
 # core dependencies
-DEPENDENCIES = ['cmdkit>=2.0.2', 'toml>=0.10.1', 'sqlalchemy>=1.3.19', ]
+DEPENDENCIES = ['cmdkit>=2.1.2', 'toml>=0.10.1', 'sqlalchemy>=1.3.19', ]
 
 
 # add dependencies for readthedocs.io
