@@ -9,4 +9,3 @@
 # If not, see <https://www.apache.org/licenses/LICENSE-2.0>.
 
 """Core systems within StreamKit."""
-
