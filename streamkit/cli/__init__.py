@@ -17,7 +17,7 @@ import logging
 
 # internal libs
 from ..__meta__ import __version__, __website__
-from ..core.logging import configure as configure_logging
+from ..core.logging import initialize_logging
 
 # external libs
 from cmdkit.app import Application, ApplicationGroup
@@ -62,7 +62,7 @@ log = logging.getLogger(__name__)
 
 # basic configuration will write to stderr,
 # formatting and level from config file
-configure_logging()
+initialize_logging()
 
 
 # inject logger back into cmdkit library
