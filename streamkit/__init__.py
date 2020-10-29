@@ -11,10 +11,5 @@
 """Package initialization for StreamKit."""
 
 
-# metadata
 from .__meta__ import (__pkgname__, __version__, __authors__, __contact__,
                        __license__, __copyright__, __description__)
-
-# top level interface
-from .subscriber import Subscriber
-from .publisher import Publisher
