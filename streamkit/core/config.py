@@ -116,8 +116,7 @@ def update_config(site: str, data: dict) -> None:
         ...    }
         ... })
     """
-    init_config(site)  # ensure default exists
-    new_config = Configuration(old=get_config().namespaces[site],
-                               new=Namespace(data))
-    # commit to file
-    new_config._master.to_local(CONF_PATH[site])  # noqa: accessing protected member
+    init_config(site)
+    new_config = Namespace.from_local(CONF_PATH[site])
+    new_config.update(data)
+    new_config.to_local(CONF_PATH[site])
