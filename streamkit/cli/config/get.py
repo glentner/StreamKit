@@ -21,12 +21,13 @@ import functools
 import logging
 
 # internal libs
-from ...core.config import SITE, CONF_PATH, expand_parameters, ConfigurationError
+from ...core.config import SITE, CONF_PATH
 from ...core.exceptions import log_exception
 
 # external libs
 from cmdkit.app import Application, exit_status
 from cmdkit.cli import Interface
+from cmdkit.config import Namespace, ConfigurationError
 import toml
 
 
@@ -91,8 +92,9 @@ class GetConfigApp(Application):
         if not os.path.exists(config_path):
             raise RuntimeError(f'{config_path} does not exist')
 
-        with open(config_path, mode='r') as config_file:
-            config = toml.load(config_file)
+        config = Namespace.from_local(config_path)
+        # with open(config_path, mode='r') as config_file:
+        #     config = toml.load(config_file)
 
         if self.varpath == '.':
             self.print_result(config)
@@ -127,7 +129,7 @@ class GetConfigApp(Application):
 
         if self.expand:
             try:
-                value = expand_parameters(variable, config_section)
+                value = getattr(config_section, variable)
             except ValueError as error:
                 raise RuntimeError(*error.args) from error
             if value is None:

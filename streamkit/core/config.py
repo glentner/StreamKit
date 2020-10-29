@@ -21,7 +21,7 @@ import logging
 
 # external libs
 import toml
-from cmdkit.config import Namespace, Configuration
+from cmdkit.config import Namespace, Configuration, ConfigurationError
 
 # internal libs
 from ..assets import load_asset
