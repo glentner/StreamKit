@@ -16,7 +16,6 @@ from typing import Dict
 # standard libs
 import os
 import ctypes
-import subprocess
 import functools
 import logging
 
@@ -100,31 +99,6 @@ def get_config() -> Configuration:
 config: Configuration = get_config()
 
 
-class ConfigurationError(Exception):
-    """Exception specific to configuration errors."""
-
-
-def expand_parameters(prefix: str, namespace: Namespace) -> str:
-    """Substitute values into namespace if `_env` or `_eval` present."""
-    value = None
-    count = 0
-    for key in filter(lambda _key: _key.startswith(prefix), namespace.keys()):
-        count += 1
-        if count > 1:
-            raise ValueError(f'more than one variant of "{prefix}" in configuration file')
-        if key.endswith('_env'):
-            value = os.getenv(namespace[key])
-            log.debug(f'expanded "{prefix}" from configuration as environment variable')
-        elif key.endswith('_eval'):
-            value = subprocess.check_output(namespace[key].split()).decode().strip()
-            log.debug(f'expanded "{prefix}" from configuration as shell command')
-        elif key == prefix:
-            value = namespace[key]
-        else:
-            raise ValueError(f'unrecognized variant of "{prefix}" ({key}) in configuration file')
-    return value
-
-
 def update_config(site: str, data: dict) -> None:
     """
     Extend the current configuration and commit it to disk.
@@ -142,8 +116,7 @@ def update_config(site: str, data: dict) -> None:
         ...    }
         ... })
     """
-    init_config(site)  # ensure default exists
-    new_config = Configuration(old=get_config().namespaces[site],
-                               new=Namespace(data))
-    # commit to file
-    new_config._master.to_local(CONF_PATH[site])  # noqa: accessing protected member
+    init_config(site)
+    new_config = Namespace.from_local(CONF_PATH[site])
+    new_config.update(data)
+    new_config.to_local(CONF_PATH[site])
