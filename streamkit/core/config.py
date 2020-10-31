@@ -10,6 +10,7 @@
 
 """Runtime configuration for StreamKit."""
 
+
 # type annotations
 from typing import Dict
 
@@ -21,7 +22,7 @@ import logging
 
 # external libs
 import toml
-from cmdkit.config import Namespace, Configuration, ConfigurationError
+from cmdkit.config import Namespace, Configuration, ConfigurationError  # noqa: unused
 
 # internal libs
 from ..assets import load_asset

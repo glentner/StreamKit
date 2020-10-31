@@ -23,11 +23,9 @@ class StreamKitHandler(Handler):
 
     publisher: Publisher = None
 
-    def __init__(self, level: int = None,
-                 batchsize: int = DEFAULT_BATCHSIZE,
-                 timeout: float = DEFAULT_TIMEOUT) -> None:
+    def __init__(self, batchsize: int = DEFAULT_BATCHSIZE, timeout: float = DEFAULT_TIMEOUT) -> None:
         """Initialize publisher."""
-        super().__init__(level=level)
+        super().__init__()
         self.publisher = Publisher(batchsize=batchsize, timeout=timeout)
         self.publisher.start()
 
